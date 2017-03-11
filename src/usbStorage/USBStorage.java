@@ -26,7 +26,7 @@ public class USBStorage {
 
 	public static String[] getUSBStorageList() {
 	
-		LinkedList<String> existingUSB = new LinkedList<>();
+		LinkedList<String> existingUSB = new LinkedList();
 	
 		try {	
 	
@@ -45,7 +45,9 @@ public class USBStorage {
 				}
 			}
 			s.close();
-		} catch(IOException | InterruptedException e) {
+		} catch(IOException e) {
+			System.out.println("Error: Cannot get USB Storage List");
+		} catch(InterruptedException e) {
 			System.out.println("Error: Cannot get USB Storage List");
 		}
 		

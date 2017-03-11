@@ -40,6 +40,8 @@ public class Client extends Thread {
 		this.id = id;
 		
 		writer.println( labManagerProtocal.Instruction.AskToJoin );
+		writer.println(name);
+		writer.println(id);
 		
 		String response = reader.nextLine();
 		
@@ -61,10 +63,6 @@ public class Client extends Thread {
 	public void run() {
 		// TODO Auto-generated method stub
 		super.run();
-		
-		writer.println(name);
-		writer.println(id);
-		
 		
 		while( server.isConnected() ) {
 			try {

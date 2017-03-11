@@ -12,9 +12,10 @@ public class Server extends Thread {
 	public static boolean canJoin;
 	public static boolean canRun;
 	public static boolean canAskToJoin;
+	public static boolean blockAllUSB;
 	private static Server instance;
 	
-	final static LinkedList<ClientThread> clientList = new LinkedList<>();
+	final static LinkedList<ClientThread> clientList = new LinkedList();
 	
 	public Server(int port) throws IOException {
 		
@@ -50,12 +51,14 @@ public class Server extends Thread {
 	}
 	
 	public static void blockAllUSB() {
+		blockAllUSB = true;
 		for (ClientThread client : clientList) {
 			client.blockUSB();
 		}
 	}
 	
 	public static void unblockAllUSB() {
+		blockAllUSB = false;
 		for (ClientThread client : clientList) {
 			client.unblockUSB();
 		}

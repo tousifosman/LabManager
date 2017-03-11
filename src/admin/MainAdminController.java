@@ -1,9 +1,18 @@
 package admin;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+
+import student.MainView;
 
 public class MainAdminController {
 
@@ -90,6 +99,52 @@ public class MainAdminController {
 		Server.unblockAllUSB();
 	}
 	
+	public static void saveAsCSV() {
+		
+		 
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Specify a file to save");
+		
+		fileChooser.setSelectedFile(new File("Lab Manager Log - " + new Date().toString() + ".csv"));
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CSV File Only", "csv", "CSV"));
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		 
+		int userSelection = fileChooser.showSaveDialog(MainFrame.getInstance());
+		 
+		if (userSelection != JFileChooser.APPROVE_OPTION) {
+		    return;
+		}
+		
+		File fileToSave = fileChooser.getSelectedFile();
+		try {
+			PrintWriter pw = new PrintWriter(fileToSave);
+			
+			DefaultTableModel tData = MainFrame.getStudentLogDataModel();
+			
+			for(int i = 0; i < tData.getColumnCount(); i++) {
+				pw.print( tData.getColumnName(i) + ", " );
+			}
+			pw.println();
+			
+			for (int row = 0; row < tData.getRowCount(); row++) {
+				for (int col = 0; col < tData.getColumnCount(); col++) {
+					pw.print( tData.getValueAt(row, col) + ", " );
+				}
+				pw.println();
+			}
+			
+			System.out.println("Successfully file saved at: " + fileToSave.getAbsolutePath());
+			
+			//MainFrame.getStudentLogDataTable().column
+			
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public static void clientLeft(ClientThread client) {
 		
 		//MainFrame.get
@@ -102,7 +157,12 @@ public class MainAdminController {
 			e.printStackTrace();
 		}
 		client.interrupt();
-		
+		updateStudentCount();
+	}
+	
+	public static void updateStudentCount() {
+		MainFrame.getInstance().lbl_activeStudentCount.setText( Integer.toString( Server.clientList.size() ) );
+		MainFrame.getInstance().lbl_totalStudentCount.setText( Integer.toString( MainFrame.getStudentLogDataModel().getRowCount() ) );
 	}
 
 }

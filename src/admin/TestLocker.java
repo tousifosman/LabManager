@@ -28,7 +28,18 @@ public class TestLocker {
 		String[] connectedUSBStorage = USBStorage.getUSBStorageList();
 		
 		if (connectedUSBStorage.length > 0) {
-			JOptionPane.showMessageDialog(null, "Remove All USB Storages (Drive: " + String.join(", ", connectedUSBStorage) + ") and run the software again", "Warning!", JOptionPane.WARNING_MESSAGE);
+			
+			String connectedUSBStorageString = "";
+			
+			for ( String s : connectedUSBStorage ) {
+				
+				connectedUSBStorageString += s + ", "; 
+				
+			}
+			
+			connectedUSBStorageString = connectedUSBStorageString.substring(0, connectedUSBStorageString.length() - 3);
+			
+			JOptionPane.showMessageDialog(null, "Remove All USB Storages (Drive: " + connectedUSBStorageString + ") and run the software again", "Warning!", JOptionPane.WARNING_MESSAGE);
 			USBStorage.viewConnectedUSBStorage();
 			System.exit(-1);
 		}

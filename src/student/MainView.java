@@ -21,6 +21,11 @@ import java.awt.Component;
 import javax.swing.Box;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class MainView extends JFrame {
@@ -50,7 +55,7 @@ public class MainView extends JFrame {
 					initReady = true;
 					
 					instance.addIconTray();
-					System.out.println(initReady);
+					//System.out.println(initReady);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -109,6 +114,7 @@ public class MainView extends JFrame {
 	 * Create the frame.
 	 */
 	public MainView() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainView.class.getResource("/resource/labmanagerLogo-256x256.png")));
 		setTitle("Lab Manager - Student");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 500);
@@ -121,14 +127,18 @@ public class MainView extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 		
-		JPanel panel_inner = new JPanel();
-		contentPane.add(panel_inner, BorderLayout.CENTER);
-		panel_inner.setLayout(new MigLayout("", "[100%]", "[100%]"));
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+		tabbedPane.setFocusable(false);
+		contentPane.add(tabbedPane);
+		
+		JPanel panel_login = new JPanel();
+		tabbedPane.addTab("Login", null, panel_login, null);
+		panel_login.setLayout(new MigLayout("", "[100%]", "[100%]"));
 		
 		JPanel panel_input = new JPanel();
-		panel_inner.add(panel_input, "cell 0 0,alignx center,aligny center");
+		panel_login.add(panel_input, "cell 0 0,alignx center,aligny center");
 		panel_input.setLayout(new BoxLayout(panel_input, BoxLayout.Y_AXIS));
 		
 		JPanel panel_nameWrap = new JPanel();
@@ -194,6 +204,26 @@ public class MainView extends JFrame {
 			}
 		});
 		panel_submit.add(btnSubmit);
+		
+		JPanel panel_info = new JPanel();
+		tabbedPane.addTab("Info", null, panel_info, null);
+		panel_info.setLayout(new BoxLayout(panel_info, BoxLayout.X_AXIS));
+		
+		JPanel panel_info_inner = new JPanel();
+		panel_info_inner.setBorder(new TitledBorder(new LineBorder(new Color(192, 192, 192), 1, true), "Info", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		panel_info.add(panel_info_inner);
+		panel_info_inner.setLayout(new MigLayout("", "[100%]", "[100%]"));
+		
+		JPanel panel_info_inner2 = new JPanel();
+		panel_info_inner.add(panel_info_inner2, "cell 0 0,alignx center,aligny center");
+		
+		JTextPane txtpnThisIsA = new JTextPane();
+		txtpnThisIsA.setContentType("text/html");
+		panel_info_inner2.add(txtpnThisIsA);
+		txtpnThisIsA.setFont(new Font("Dialog", Font.PLAIN, 16));
+		txtpnThisIsA.setEditable(false);
+		txtpnThisIsA.setBackground(new Color(0, 0, 0, 0));
+		txtpnThisIsA.setText("This is a project developed by Tousif Osman.<br>\nContact Info: <a href=\"mailto:tousifosman@gmail.com\">tousifosman@gmail.com</a><br>\n<br>\nThank you for using the software.");
 	}
 
 }

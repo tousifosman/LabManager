@@ -61,12 +61,13 @@ public class ClientThread extends Thread {
 		
 		
 		if( reader.nextLine().equals( labManagerProtocal.Instruction.AskToJoin ) ) {
-			if(Server.canJoin == true || Server.canAskToJoin && JOptionPane.showConfirmDialog(null, "A student is trying to join, will you allow him/her?", "Asked to join", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+			
+			name = reader.nextLine();
+			id = reader.nextLine();
+			
+			if(Server.canJoin == true || Server.canAskToJoin && JOptionPane.showConfirmDialog(null, name + "(" + id  +") is trying to join, will you allow him/her?", "Asked to join", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 				
 				writer.println( labManagerProtocal.Instruction.AllowedToJoin );
-				
-				name = reader.nextLine();
-				id = reader.nextLine();
 				
 				Server.clientList.add( this );
 				MainAdminController.clientJoined(this);
@@ -78,6 +79,12 @@ public class ClientThread extends Thread {
 		} else {
 			writer.println("Invalid Message");
 			return;
+		}
+		
+		MainAdminController.updateStudentCount();
+		
+		if(Server.blockAllUSB) {
+			blockUSB();
 		}
 		
 		

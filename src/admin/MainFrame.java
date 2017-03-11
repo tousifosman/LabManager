@@ -36,6 +36,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
+import javax.swing.JTextPane;
+import java.awt.FlowLayout;
+import javax.swing.SpringLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -54,6 +62,9 @@ public class MainFrame extends JFrame {
 	private JButton btn_csvSave;
 	private JButton btn_exit;
 	private JToggleButton tbtn_askToJoin;
+	public JLabel lbl_activeStudentCount;
+	public JLabel lbl_totalStudentCount;
+	
 
 	public static void startView() {
 		
@@ -62,6 +73,7 @@ public class MainFrame extends JFrame {
 		//mainThread =  new Thread(new Runnable() {
 			//public void run() {
 				try {
+					
 					instance = new MainFrame();
 					instance.setVisible(true);
 				} catch (Exception e) {
@@ -153,6 +165,7 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/resource/labmanagerLogo-256x256.png")));
 		setBackground(SystemColor.controlHighlight);
 		setTitle("Lab Manager - Teacher");
 		setBounds(100, 100, 1200, 400);
@@ -208,6 +221,36 @@ public class MainFrame extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(  table );
 		panel_studentListInner.add(scrollPane);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		JPanel panel_studentInfo = new JPanel();
+		panel_studentList.add(panel_studentInfo, BorderLayout.SOUTH);
+		panel_studentInfo.setLayout(new BoxLayout(panel_studentInfo, BoxLayout.X_AXIS));
+		
+		JPanel panel_activeStudentCount = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_activeStudentCount.getLayout();
+		flowLayout.setHgap(15);
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		panel_studentInfo.add(panel_activeStudentCount);
+		
+		JLabel lbl_activeStudent = new JLabel("Active Students:");
+		panel_activeStudentCount.add(lbl_activeStudent);
+		
+		lbl_activeStudentCount = new JLabel("0");
+		lbl_activeStudent.setLabelFor(lbl_activeStudentCount);
+		panel_activeStudentCount.add(lbl_activeStudentCount);
+		
+		JPanel panel_totalStudentCount = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_totalStudentCount.getLayout();
+		flowLayout_1.setHgap(10);
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		panel_studentInfo.add(panel_totalStudentCount);
+		
+		JLabel lbl_totalStudent = new JLabel("Total Students:");
+		panel_totalStudentCount.add(lbl_totalStudent);
+		
+		lbl_totalStudentCount = new JLabel("0");
+		lbl_totalStudent.setLabelFor(lbl_totalStudentCount);
+		panel_totalStudentCount.add(lbl_totalStudentCount);
 		
 		JPanel panel_actionButtons = new JPanel();
 		panel_actionButtons.setBorder(new TitledBorder(new LineBorder(new Color(192, 192, 192), 1, true), "Actions", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
@@ -270,10 +313,6 @@ public class MainFrame extends JFrame {
 		tbtn_usbLock.setEnabled(false);
 		panel_innerButtonContainer.add(tbtn_usbLock);
 		
-		btn_csvSave = new JButton("Save as CSV");
-		btn_csvSave.setEnabled(false);
-		panel_innerButtonContainer.add(btn_csvSave);
-		
 		Component rigidArea = Box.createRigidArea(new Dimension(200, 20));
 		panel_innerButtonContainer.add(rigidArea);
 		
@@ -305,6 +344,8 @@ public class MainFrame extends JFrame {
 					tbtn_sessionLock.setEnabled(true);
 					tbtn_askToJoin.setEnabled(true);
 					tbtn_usbLock.setEnabled(true);
+					//btn_csvSave.setEnabled(true);
+					
 					
 				} else if (JOptionPane.showConfirmDialog(null, "Are you sure you want to stop the server?\nAll Connected students will be disconnected", "Are you sure?", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 					
@@ -325,12 +366,21 @@ public class MainFrame extends JFrame {
 					tbtn_sessionLock.setEnabled(false);
 					tbtn_askToJoin.setEnabled(false);
 					tbtn_usbLock.setEnabled(false);
+					//btn_csvSave.setEnabled(false);
 					
 				} else {
 					tbtn_startServer.setSelected(true);
 				}
 			}
 		});
+		
+		btn_csvSave = new JButton("Save as CSV");
+		btn_csvSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				MainAdminController.saveAsCSV();
+			}
+		});
+		panel_innerButtonContainer.add(btn_csvSave);
 		
 		panel_innerButtonContainer.add(tbtn_startServer);
 		
@@ -367,5 +417,26 @@ public class MainFrame extends JFrame {
 		panel.add(textField_port);
 		textField_port.setText("8181");
 		textField_port.setColumns(10);
+		
+		JPanel panel_info = new JPanel();
+		panel_info.setBorder(new EmptyBorder(10, 10, 10, 10));
+		tabbedPane.addTab("Info", null, panel_info, null);
+		panel_info.setLayout(new BoxLayout(panel_info, BoxLayout.X_AXIS));
+		
+		JPanel panel_info_inner = new JPanel();
+		panel_info_inner.setBorder(new TitledBorder(new LineBorder(new Color(192, 192, 192)), "Info", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_info.add(panel_info_inner);
+		panel_info_inner.setLayout(new MigLayout("", "[100%]", "[100%]"));
+		
+		JPanel panel_inner2 = new JPanel();
+		panel_info_inner.add(panel_inner2, "cell 0 0,alignx center,aligny center");
+		
+		JTextPane txtpn_info = new JTextPane();
+		txtpn_info.setFont(new Font("Dialog", Font.PLAIN, 16));
+		txtpn_info.setEditable(false);
+		panel_inner2.add(txtpn_info);
+		txtpn_info.setBackground(new Color(0, 0, 0, 0));
+		txtpn_info.setContentType("text/html");
+		txtpn_info.setText("This is a project developed by Tousif Osman.<br>\nContact Info: <a href=\"mailto:tousifosman@gmail.com\">tousifosman@gmail.com</a><br>\n<br>\nThank you for using the software.");
 	}
 }
